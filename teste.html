@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Configuração - Sistema de Rotas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .test-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ddd;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            border-left-color: #28a745;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        .test-warn {
+            background-color: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h1 class="text-center mb-4">🧪 Teste de Configuração</h1>
+                <p class="text-center text-muted">Esta página verifica se o sistema está configurado corretamente</p>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Resultados dos Testes</h3>
+                    </div>
+                    <div class="card-body" id="test-results">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Executando testes...</span>
+                            </div>
+                            <p class="mt-2">Executando testes de configuração...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4" id="detailed-info" style="display: none;">
+                    <div class="card-header">
+                        <h3>Informações Detalhadas</h3>
+                    </div>
+                    <div class="card-body" id="detailed-content">
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary" onclick="runTests()">🔄 Executar Testes Novamente</button>
+                    <a href="index.html" class="btn btn-outline-primary">⬅️ Voltar ao Sistema</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necessários -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    
+    <script>
+        // Sistema de testes
+        class SystemTester {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+            }
+            
+            addTest(name, testFunction, description) {
+                this.tests.push({
+                    name,
+                    testFunction,
+                    description
+                });
+            }
+            
+            async runAllTests() {
+                this.results = [];
+                
+                for (let test of this.tests) {
+                    try {
+                        const result = await test.testFunction();
+                        this.results.push({
+                            name: test.name,
+                            description: test.description,
+                            status: result.status,
+                            message: result.message,
+                            details: result.details || null
+                        });
+                    } catch (error) {
+                        this.results.push({
+                            name: test.name,
+                            description: test.description,
+                            status: 'fail',
+                            message: `Erro no teste: ${error.message}`,
+                            details: error.stack
+                        });
+                    }
+                }
+                
+                return this.results;
+            }
+            
+            getResultsHTML() {
+                let html = '';
+                let passCount = 0;
+                let failCount = 0;
+                let warnCount = 0;
+                
+                this.results.forEach(result => {
+                    const statusClass = result.status === 'pass' ? 'test-pass' : 
+                                       result.status === 'warn' ? 'test-warn' : 'test-fail';
+                    const icon = result.status === 'pass' ? '✅' : 
+                                result.status === 'warn' ? '⚠️' : '❌';
+                    
+                    if (result.status === 'pass') passCount++;
+                    else if (result.status === 'warn') warnCount++;
+                    else failCount++;
+                    
+                    html += `
+                        <div class="test-item ${statusClass}">
+                            <strong>${icon} ${result.name}</strong><br>
+                            <small class="text-muted">${result.description}</small><br>
+                            ${result.message}
+                            ${result.details ? `<div class="code-block mt-2">${result.details}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                // Resumo
+                const summary = `
+                    <div class="alert alert-info mb-3">
+                        <strong>Resumo dos Testes:</strong><br>
+                        ✅ Aprovados: ${passCount} | ⚠️ Avisos: ${warnCount} | ❌ Falharam: ${failCount}
+                    </div>
+                `;
+                
+                return summary + html;
+            }
+        }
+        
+        // Instância do testador
+        const tester = new SystemTester();
+        
+        // Definir testes
+        
+        // Teste 1: Verificar se arquivos de configuração existem
+        tester.addTest(
+            'Arquivos de Configuração',
+            async () => {
+                if (typeof AZURE_MAPS_CONFIG === 'undefined') {
+                    return {
+                        status: 'fail',
+                        message: 'Arquivo config.js não carregado ou AZURE_MAPS_CONFIG não definido'
+                    };
+                }
+                
+                if (typeof PORTARIAS === 'undefined') {
+                    return {
+                        status: 'fail',
+                        message: 'PORTARIAS não definido no config.js'
+                    };
+                }
+                
+                if (typeof DOCAS === 'undefined') {
+                    return {
+                        status: 'fail',
+                        message: 'DOCAS não definido no config.js'
+                    };
+                }
+                
+                return {
+                    status: 'pass',
+                    message: 'Todos os arquivos de configuração carregados corretamente'
+                };
+            },
+            'Verifica se os arquivos de configuração foram carregados'
+        );
+        
+        // Teste 2: Verificar configuração do Azure Maps
+        tester.addTest(
+            'Configuração Azure Maps',
+            async () => {
+                if (!AZURE_MAPS_CONFIG.subscriptionKey || 
+                    AZURE_MAPS_CONFIG.subscriptionKey === 'SUA_CHAVE_AZURE_MAPS_AQUI') {
+                    return {
+                        status: 'fail',
+                        message: 'Chave do Azure Maps não configurada. Edite o arquivo js/config.js',
+                        details: 'AZURE_MAPS_CONFIG.subscriptionKey = "SUA_CHAVE_AZURE_MAPS_AQUI";'
+                    };
+                }
+                
+                if (AZURE_MAPS_CONFIG.subscriptionKey.length < 30) {
+                    return {
+                        status: 'warn',
+                        message: 'Chave do Azure Maps parece muito curta. Verifique se está correta'
+                    };
+                }
+                
+                return {
+                    status: 'pass',
+                    message: 'Chave do Azure Maps configurada'
+                };
+            },
+            'Verifica se a chave do Azure Maps foi configurada'
+        );
+        
+        // Teste 3: Verificar portarias
+        tester.addTest(
+            'Configuração de Portarias',
+            async () => {
+                if (!Array.isArray(PORTARIAS) || PORTARIAS.length === 0) {
+                    return {
+                        status: 'fail',
+                        message: 'Nenhuma portaria configurada'
+                    };
+                }
+                
+                let invalidPortarias = [];
+                PORTARIAS.forEach((portaria, index) => {
+                    if (!portaria.id || !portaria.nome || !portaria.coordenadas) {
+                        invalidPortarias.push(index + 1);
+                    }
+                    
+                    if (portaria.coordenadas) {
+                        const lat = portaria.coordenadas.latitude;
+                        const lng = portaria.coordenadas.longitude;
+                        
+                        if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                            invalidPortarias.push(index + 1);
+                        }
+                    }
+                });
+                
+                if (invalidPortarias.length > 0) {
+                    return {
+                        status: 'fail',
+                        message: `Portarias com problemas: ${invalidPortarias.join(', ')}`,
+                        details: 'Verifique se todas as portarias têm id, nome e coordenadas válidas'
+                    };
+                }
+                
+                return {
+                    status: 'pass',
+                    message: `${PORTARIAS.length} portaria(s) configurada(s) corretamente`
+                };
+            },
+            'Verifica se as portarias estão configuradas corretamente'
+        );
+        
+        // Teste 4: Verificar docas
+        tester.addTest(
+            'Configuração de Docas',
+            async () => {
+                if (!Array.isArray(DOCAS) || DOCAS.length === 0) {
+                    return {
+                        status: 'fail',
+                        message: 'Nenhuma doca configurada'
+                    };
+                }
+                
+                let invalidDocas = [];
+                DOCAS.forEach((doca, index) => {
+                    if (!doca.id || !doca.nome || !doca.coordenadas) {
+                        invalidDocas.push(index + 1);
+                    }
+                    
+                    if (doca.coordenadas) {
+                        const lat = doca.coordenadas.latitude;
+                        const lng = doca.coordenadas.longitude;
+                        
+                        if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                            invalidDocas.push(index + 1);
+                        }
+                    }
+                });
+                
+                if (invalidDocas.length > 0) {
+                    return {
+                        status: 'fail',
+                        message: `Docas com problemas: ${invalidDocas.join(', ')}`,
+                        details: 'Verifique se todas as docas têm id, nome e coordenadas válidas'
+                    };
+                }
+                
+                return {
+                    status: 'pass',
+                    message: `${DOCAS.length} doca(s) configurada(s) corretamente`
+                };
+            },
+            'Verifica se as docas estão configuradas corretamente'
+        );
+        
+        // Teste 5: Verificar bibliotecas externas
+        tester.addTest(
+            'Bibliotecas JavaScript',
+            async () => {
+                const missingLibs = [];
+                
+                if (typeof QRCode === 'undefined') {
+                    missingLibs.push('QRCode.js');
+                }
+                
+                if (typeof atlas === 'undefined') {
+                    missingLibs.push('Azure Maps SDK');
+                }
+                
+                if (typeof bootstrap === 'undefined') {
+                    missingLibs.push('Bootstrap');
+                }
+                
+                if (missingLibs.length > 0) {
+                    return {
+                        status: 'fail',
+                        message: `Bibliotecas não carregadas: ${missingLibs.join(', ')}`,
+                        details: 'Verifique a conexão com internet e os links CDN nos arquivos HTML'
+                    };
+                }
+                
+                return {
+                    status: 'pass',
+                    message: 'Todas as bibliotecas JavaScript carregadas'
+                };
+            },
+            'Verifica se as bibliotecas JavaScript foram carregadas'
+        );
+        
+        // Teste 6: Verificar conexão com Azure Maps
+        tester.addTest(
+            'Conexão Azure Maps',
+            async () => {
+                if (!AZURE_MAPS_CONFIG.subscriptionKey || 
+                    AZURE_MAPS_CONFIG.subscriptionKey === 'SUA_CHAVE_AZURE_MAPS_AQUI') {
+                    return {
+                        status: 'fail',
+                        message: 'Não é possível testar conexão sem chave configurada'
+                    };
+                }
+                
+                try {
+                    // Tentar fazer uma requisição simples à API
+                    const response = await fetch(`https://atlas.microsoft.com/search/address/json?api-version=1.0&subscription-key=${AZURE_MAPS_CONFIG.subscriptionKey}&query=São Paulo, Brasil`);
+                    
+                    if (response.ok) {
+                        return {
+                            status: 'pass',
+                            message: 'Conexão com Azure Maps funcionando'
+                        };
+                    } else if (response.status === 401) {
+                        return {
+                            status: 'fail',
+                            message: 'Chave do Azure Maps inválida (Erro 401)',
+                            details: 'Verifique se a chave está correta no arquivo config.js'
+                        };
+                    } else {
+                        return {
+                            status: 'warn',
+                            message: `Resposta inesperada da API: ${response.status}`,
+                            details: 'Pode ser um problema temporário da API'
+                        };
+                    }
+                } catch (error) {
+                    return {
+                        status: 'warn',
+                        message: 'Não foi possível testar conexão com Azure Maps',
+                        details: error.message
+                    };
+                }
+            },
+            'Testa a conexão com a API do Azure Maps'
+        );
+        
+        // Teste 7: Verificar URL base
+        tester.addTest(
+            'Configuração de URL',
+            async () => {
+                if (!SYSTEM_CONFIG.baseUrl || SYSTEM_CONFIG.baseUrl.includes('seusistema')) {
+                    return {
+                        status: 'warn',
+                        message: 'URL base não configurada ou usando exemplo',
+                        details: 'Configure SYSTEM_CONFIG.baseUrl no arquivo config.js com a URL real do sistema'
+                    };
+                }
+                
+                if (!SYSTEM_CONFIG.baseUrl.startsWith('http')) {
+                    return {
+                        status: 'fail',
+                        message: 'URL base deve começar com http:// ou https://'
+                    };
+                }
+                
+                return {
+                    status: 'pass',
+                    message: 'URL base configurada corretamente'
+                };
+            },
+            'Verifica se a URL base está configurada'
+        );
+        
+        // Teste 8: Verificar localStorage
+        tester.addTest(
+            'Armazenamento Local',
+            async () => {
+                try {
+                    localStorage.setItem('teste-sistema', 'ok');
+                    const valor = localStorage.getItem('teste-sistema');
+                    localStorage.removeItem('teste-sistema');
+                    
+                    if (valor === 'ok') {
+                        return {
+                            status: 'pass',
+                            message: 'LocalStorage funcionando corretamente'
+                        };
+                    } else {
+                        return {
+                            status: 'fail',
+                            message: 'LocalStorage não está funcionando'
+                        };
+                    }
+                } catch (error) {
+                    return {
+                        status: 'fail',
+                        message: 'LocalStorage não disponível ou bloqueado',
+                        details: 'Verifique as configurações de privacidade do navegador'
+                    };
+                }
+            },
+            'Verifica se o armazenamento local está funcionando'
+        );
+        
+        // Função para executar todos os testes
+        async function runTests() {
+            document.getElementById('test-results').innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Executando testes...</span>
+                    </div>
+                    <p class="mt-2">Executando testes de configuração...</p>
+                </div>
+            `;
+            
+            document.getElementById('detailed-info').style.display = 'none';
+            
+            try {
+                await tester.runAllTests();
+                document.getElementById('test-results').innerHTML = tester.getResultsHTML();
+                
+                // Mostrar informações detalhadas
+                showDetailedInfo();
+                
+            } catch (error) {
+                document.getElementById('test-results').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>❌ Erro ao executar testes:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Mostrar informações detalhadas do sistema
+        function showDetailedInfo() {
+            const info = {
+                'Configuração Atual': {
+                    'Azure Maps Key': AZURE_MAPS_CONFIG.subscriptionKey ? 
+                        AZURE_MAPS_CONFIG.subscriptionKey.substring(0, 10) + '...' : 'Não configurada',
+                    'URL Base': SYSTEM_CONFIG.baseUrl,
+                    'Portarias': PORTARIAS.length,
+                    'Docas': DOCAS.length,
+                    'Centro do Mapa': `${AZURE_MAPS_CONFIG.center[1]}, ${AZURE_MAPS_CONFIG.center[0]}`
+                },
+                'Informações do Navegador': {
+                    'User Agent': navigator.userAgent,
+                    'Idioma': navigator.language,
+                    'Plataforma': navigator.platform,
+                    'Cookies Habilitados': navigator.cookieEnabled ? 'Sim' : 'Não',
+                    'Online': navigator.onLine ? 'Sim' : 'Não',
+                    'Resolução': `${screen.width}x${screen.height}`,
+                    'Viewport': `${window.innerWidth}x${window.innerHeight}`
+                }
+            };
+            
+            let html = '';
+            Object.keys(info).forEach(section => {
+                html += `<h5>${section}</h5><ul class="list-group mb-3">`;
+                Object.keys(info[section]).forEach(key => {
+                    html += `<li class="list-group-item d-flex justify-content-between">
+                        <span><strong>${key}:</strong></span>
+                        <span>${info[section][key]}</span>
+                    </li>`;
+                });
+                html += '</ul>';
+            });
+            
+            document.getElementById('detailed-content').innerHTML = html;
+            document.getElementById('detailed-info').style.display = 'block';
+        }
+        
+        // Executar testes ao carregar a página
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+</html>
