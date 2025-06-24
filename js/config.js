@@ -7,7 +7,7 @@
 // Para obter uma chave: https://portal.azure.com > Azure Maps > Autenticação
 const AZURE_MAPS_CONFIG = {
     // IMPORTANTE: Substitua pela sua chave do Azure Maps
-    subscriptionKey: '7kjPw5uKxWBxo2vb1mzQVN4bkAVPyAPqi9wTRw7mI0GsKmPvKXLcJQQJ99BFACYeBjF91W9IAAAgAZMP1peH',
+    subscriptionKey: 'API_Key',
     
     // Configurações do mapa
     language: 'pt-BR',
