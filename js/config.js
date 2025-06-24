@@ -7,7 +7,7 @@
 // Para obter uma chave: https://portal.azure.com > Azure Maps > Autenticação
 const AZURE_MAPS_CONFIG = {
     // IMPORTANTE: Substitua pela sua chave do Azure Maps
-    subscriptionKey: 'API_Key',
+    subscriptionKey: '7kjPw5uKxWBxo2vb1mzQVN4bkAVPyAPqi9wTRw7mI0GsKmPvKXLcJQQJ99BFACYeBjF91W9IAAAgAZMP1peH',
     
     // Configurações do mapa
     language: 'pt-BR',
@@ -27,8 +27,8 @@ const PORTARIAS = [
         nome: "Portaria Principal",
         descricao: "Entrada principal - Recepção de caminhões",
         coordenadas: {
-            latitude: -23.550520,
-            longitude: -46.633308
+            latitude: -23.748989,
+            longitude: -46.564371
         }
     },
     {
@@ -61,8 +61,8 @@ const DOCAS = [
         setor: "Recebimento",
         descricao: "Doca para descarga de materiais",
         coordenadas: {
-            latitude: -23.550720,
-            longitude: -46.633508
+            latitude: -23.748253,
+            longitude: -46.562893
         }
     },
     {
