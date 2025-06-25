@@ -61,8 +61,8 @@ const DOCAS = [
         setor: "Recebimento",
         descricao: "Doca para descarga de materiais",
         coordenadas: {
-            latitude: -23.748253,
-            longitude: -46.562893
+            latitude: -23.748989,
+            longitude: -46.564371
         }
     },
     {
