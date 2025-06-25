@@ -61,8 +61,8 @@ const DOCAS = [
         setor: "Recebimento",
         descricao: "Doca para descarga de materiais",
         coordenadas: {
-            latitude: -23.748989,
-            longitude: -46.564371
+            latitude: -23.748253,
+            longitude: -46.562893
         }
     },
     {
@@ -195,7 +195,7 @@ function getDocaCoordinates(docaId) {
  */
 function isAzureMapsConfigured() {
     return AZURE_MAPS_CONFIG.subscriptionKey && 
-           AZURE_MAPS_CONFIG.subscriptionKey !== 'SUA_KEY_AQUI';
+           AZURE_MAPS_CONFIG.subscriptionKey !== 'SUA_CHAVE_AZURE_MAPS_AQUI';
 }
 
 // CONFIGURAÇÕES DE DESENVOLVIMENTO
