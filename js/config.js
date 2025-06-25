@@ -195,7 +195,7 @@ function getDocaCoordinates(docaId) {
  */
 function isAzureMapsConfigured() {
     return AZURE_MAPS_CONFIG.subscriptionKey && 
-           AZURE_MAPS_CONFIG.subscriptionKey !== 'GEEmeJByFwKTXPVPt3sNYTsIK9hzOWHupau1iqvR5eOTGRGBDLg0JQQJ99BFACYeBjF91W9IAAAgAZMPku1j';
+           AZURE_MAPS_CONFIG.subscriptionKey !== 'SUA_CHAVE_AZURE_MAPS_AQUI';
 }
 
 // CONFIGURAÇÕES DE DESENVOLVIMENTO
