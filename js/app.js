@@ -43,18 +43,18 @@ function initializeApp() {
  * Exibe alerta de configuração do Azure Maps
  */
 function showConfigurationAlert() {
-    const alertHtml = `
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <h4 class="alert-heading">Configuração Necessária!</h4>
-            <p>Para que o sistema funcione corretamente, você precisa configurar sua chave do Azure Maps no arquivo <code>js/config.js</code>.</p>
-            <hr>
-            <p class="mb-0">Siga o manual de implantação para obter sua chave gratuita do Azure Maps.</p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    `;
-    
-    document.querySelector('main .container').insertAdjacentHTML('afterbegin', alertHtml);
+  const alertHtml = `<div class="alert alert-danger mt-3" role="alert">
+    Para que o sistema funcione corretamente, você precisa configurar sua chave do Azure Maps no arquivo <code>js/config.js</code>.<br>
+    Siga o manual de implantação para obter sua chave gratuita do Azure Maps.
+  </div>`;
+  const container = document.getElementById('alert-container');
+  if (container) {
+    container.insertAdjacentHTML('beforeend', alertHtml);
+  } else {
+    alert('Para que o sistema funcione corretamente, você precisa configurar sua chave do Azure Maps no arquivo js/config.js.');
+  }
 }
+
 
 /**
  * Carrega as portarias na dropdown
