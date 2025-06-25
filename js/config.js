@@ -61,8 +61,8 @@ const DOCAS = [
         setor: "Recebimento",
         descricao: "Doca para descarga de materiais",
         coordenadas: {
-            latitude: -23.743449,
-            longitude: -46.566145
+            latitude: -23.748253,
+            longitude: -46.562893
         }
     },
     {
@@ -114,7 +114,7 @@ const SYSTEM_CONFIG = {
     companyName: "BASF",
     
     // URL base do sistema (substitua pelo seu domínio)
-    baseUrl: "https://seusistema.github.io",
+    baseUrl: "https://peottabasf.github.io",
     
     // Configurações de link temporário
     defaultExpiryHours: 1,
@@ -150,7 +150,7 @@ const HOSTING_CONFIG = {
     // basePath: '/nome-do-repositorio',
     
     // Se estiver hospedando na raiz do domínio, deixe basePath vazio:
-    basePath: '',
+    basePath: 'https://peottabasf.github.io/GPS/',
     
     // Configurações de CORS (para desenvolvimento local)
     enableCORS: true
