@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    document.addEventListener('DOMContentLoaded', () => {
+      const libraries = {
+        'Azure Maps SDK': () => typeof atlas !== 'undefined',
+        'QRCode.js': () => typeof QRCode !== 'undefined',
+        'Bootstrap': () => typeof bootstrap !== 'undefined'
+      };
+    
+      let missingLibs = [];
+      
+      Object.entries(libraries).forEach(([name, check]) => {
+        if (!check()) missingLibs.push(name);
+      });
+    
+      if (missingLibs.length > 0) {
+        document.getElementById('test-results').innerHTML = `
+          ❌ Bibliotecas ausentes: ${missingLibs.join(', ')}
+          <br>Verifique:
+          <ul>
+            <li>Conexão com internet</li>
+            <li>Links CDN nos arquivos HTML</li>
+            <li>Bloqueadores de scripts</li>
+          </ul>
+        `;
+      } else {
+        document.getElementById('test-results').innerHTML = "✅ Todas bibliotecas carregadas!";
+      }
+    });
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teste de Configuração - Sistema de Rotas</title>
